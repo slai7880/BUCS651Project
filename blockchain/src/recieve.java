@@ -1,6 +1,7 @@
 
 import java.io.IOException;
 import java.net.DatagramPacket;
+import java.net.InetAddress;
 
 class recieve implements Runnable
 {
@@ -19,6 +20,12 @@ class recieve implements Runnable
 			
 			String recvStr = new String(recvPacket.getData() , 0 , recvPacket.getLength());
 			//提取序列号
+			InetAddress ipAddress = recvPacket.getAddress();
+			int port = recvPacket.getPort();
+			String ip = ipAddress.toString();
+			ip=ip.substring(1, ip.length());
+			
+			System.out.println("RECEIVED FROM: " + ip + ":" + port);
 			System.out.println(recvStr);
 			
 			send.close=false; send.a=false;

@@ -20,8 +20,6 @@ class send{
         }
         if (close) {client.close();   return;}
 
-		String s=count+"-";
-		sendStr=s+sendStr;
 		count++;
         byte[] sendBuf;
         sendBuf = sendStr.getBytes();

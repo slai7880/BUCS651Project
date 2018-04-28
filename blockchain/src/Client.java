@@ -59,42 +59,20 @@ public class Client extends Thread{
       DatagramSocket clientSocket = new DatagramSocket();
       //System.out.println(clientSocket.isBound());
       clientSocket.setReuseAddress(true);
-      
 
       send.soc("test", serverName, port);
-      // receive Data 
-      /*DatagramPacket receivePacket = new DatagramPacket(new byte[1024], 1024);
-      clientSocket.receive(receivePacket);
-      System.out.println("received data from server");
-      clientSocket.close();
-      // Convert Response to IP and Port
+      while (true) {
+    	  BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    	  System.out.print("Enter your destination: ");
+    	  String[] ip; 
+    	  String des = reader.readLine();
+    	  ip=des.split(":");
+    	  System.out.print("Enter your message: ");
+    	  String word = reader.readLine();
+    	  send.soc(word, ip[0], Integer.parseInt(ip[1]));
+      }
       
-      String response = new String(receivePacket.getData());
-      String[] splitResponse = response.split(":");
-      myIp = splitResponse[0];
-      myPort = Integer.parseInt(splitResponse[1]);
-  	  peerIp = splitResponse[2];
-  	  peerPort = Integer.parseInt(splitResponse[3]);
-      System.out.println("my Info: " + myIp + ":" + myPort );
-      System.out.println("peer Info: " + peerIp + ":" + peerPort );
-	  System.out.println("\n\n");
-
-	//clientSocket.bind(myPort);
-	  //clientSocket.close();
-	 
-      //listen to port
-      Thread listen = new Client("listen");
-      listen.start();
       
-      Thread.sleep(2000);
-      
-      //send datagram
-      Thread send = new Client("send");
-      send.start();
-      
-	  //waits for thread to end
-	  listen.join();
-	  send.join();*/
 	}//main
 	
 	/**************************************************

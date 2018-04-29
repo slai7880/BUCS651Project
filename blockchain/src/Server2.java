@@ -31,18 +31,21 @@ public class Server2 {
 			ip=ip.substring(1, ip.length());
 			
 			System.out.println("RECEIVED: " + ip + ":" + port);
-			mylist.add(ip + ":" + port);
+			String temp=ip + ":" + port;
+			if (!mylist.contains(temp)){
+				mylist.add(temp);
+			}
 			DatagramSocket ServerSocket = new DatagramSocket();
 		      //System.out.println(clientSocket.isBound());
 		      ServerSocket.setReuseAddress(true);
-		      
 		      for (String i:mylist) {
-		    	  byte[] sendData = i.getBytes();
+		    	  byte[] sendData = ("1-"+i).getBytes();
 
 		      // send Data to Client
 		      DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName(ip), port);
 		      ServerSocket.send(sendPacket);
 		      }
+		      
 		}
 	}
 

@@ -9,47 +9,111 @@
  *
  */
 
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+
+import javax.swing.*;
+
 import java.text.*;
 
 public class Client extends Thread{
-
-	String activity;
-	static String myIp;
-	static int myPort;
-	static String peerIp;
-	static int peerPort;
 	
-	public Client(String activity){
-		this.activity = activity;
-		this.myIp = "";
-		this.peerIp = "";
-	}
+	private JFrame frame = new JFrame("cat");
+	private Container c = frame.getContentPane();
+	private JTextField command = new JTextField();
+	static TextArea output=new TextArea("",0,0,1);
+	static Label show_id=new Label();
+	private JScrollPane jp=new JScrollPane(output);
 	
-	/**************************************************
-	 * runs the threads to listen to the port and talk to the peer
-	 */
-	public void run(){
-	  try{
-		if(activity == "listen"){
-			peerListen();
-		}else{
-			peerSend();
+	private JButton ok = new JButton("ok");
+	private JButton cancel = new JButton("cancel");
+	private JButton clear = new JButton("clear");
+	
+//	private rule re;
+	
+	static int px;
+	static int py;
+	
+	static boolean cli_a=false;
+	
+	public Client(){
+		
+		frame.setSize(680,500);
+		frame.setResizable(false);
+		c.setLayout(new BorderLayout());
+		initFrame();
+		frame.setVisible(true);
+		
 		}
-	  }catch(Exception e){
-		  e.printStackTrace();
-	  }
-	  
+	
+	private void initFrame() {
+		
+		//output frame
+		JPanel fieldPanel = new JPanel();
+		fieldPanel.setLayout(null);
+		JLabel l1 = new JLabel("command");
+		l1.setBounds(410,30, 70, 20);
+		fieldPanel.add(l1);
+		
+		command.setBounds(480,30,200,20);
+		show_id.setBounds(410, 10, 150, 20);
+		
+		output.setBounds(410,60,270,340);
+		
+		show_id.setText("user's id=");
+		
+		jp.setVerticalScrollBarPolicy( JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		
+		fieldPanel.add(show_id);
+		fieldPanel.add(jp);
+		fieldPanel.add(command);
+		fieldPanel.add(output);
+		output.setEditable(false);
+		
+		c.add(fieldPanel,"Center");
+
+		
+		cancel.addMouseListener(new MouseAdapter(){
+		public void mouseClicked(MouseEvent e){
+			if (e.getSource()==cancel){
+				System.exit(0);
+				}
+	}	
+		});
+		ok.addMouseListener(new MouseAdapter(){
+			public void mouseClicked(MouseEvent e){
+				if (e.getSource()==ok){
+					output.append(">"+command.getText()+"\n");
+					command.setText("");
+				}
+			}
+		});
+		clear.addMouseListener(new MouseAdapter(){
+			public void mouseClicked(MouseEvent e){
+				if (e.getSource()==clear){
+					output.setText("");
+				}
+			}	
+		});
+		
+		
+		//bottom
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new FlowLayout());
+		buttonPanel.add(ok);
+		buttonPanel.add(cancel);
+		buttonPanel.add(clear);
+		c.add(buttonPanel,"South");
+	}
+	public static void main(String[] args){
+		new Client();
 	}
 	
-	/**************************************************
-	 * Starts the program
-	 * @param args
-	 * @throws SocketException 
-	 * @throws UnknownHostException 
-	 */
+/*	
 	public static void main(String[] args) throws Exception {
       //String serverName = "teamone.onthewifi.com";
 	  String serverName = "155.41.53.145";
@@ -60,89 +124,30 @@ public class Client extends Thread{
       //System.out.println(clientSocket.isBound());
       clientSocket.setReuseAddress(true);
 
-      send.soc("test", serverName, port);
+     
       while (true) {
     	  BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-    	  System.out.print("Enter your destination: ");
+    	  System.out.println("Enter your order: (chat/find)");
+    	  String ord = reader.readLine();
+    	  if (ord.equals("chat")) {
+    	  System.out.println("Enter your destination: ");
     	  String[] ip; 
     	  String des = reader.readLine();
     	  ip=des.split(":");
-    	  System.out.print("Enter your message: ");
+    	  System.out.println("Enter your message: ");
     	  String word = reader.readLine();
     	  send.soc(word, ip[0], Integer.parseInt(ip[1]));
+    	  }
+    	  else if (ord.equals("find"))
+    	  {
+    		  send.soc("test", serverName, port);
+    	  }
       }
       
       
 	}//main
 	
-	/**************************************************
-	 * sends the p2p chat
-	 */
-	private static void peerSend() {
-
-		try {
-			//create socket
-			//Socket mySoc = new Socket(peerIp, peerPort);
-			Socket mySoc = new Socket();
-			mySoc.setReuseAddress(true);
-			//mySoc.bind( new InetSocketAddress("myIp", myPort) );
-			mySoc.connect( new InetSocketAddress(peerIp, peerPort) );
-			//System.out.println(mySoc.isBound());
-			pause();
-					
-			//create streams
-			DataOutputStream out = new DataOutputStream( mySoc.getOutputStream() );
-			DataInputStream in = new DataInputStream( mySoc.getInputStream() );
-			
-			//create and send message
-			System.out.println("Sending to Socket: " + peerPort);
-			String msg = getTime() + "\t" + myPort + ": Can you hear me?";
-			out.writeUTF(msg);
-			System.out.println(msg);
-			
-			//get string from client B
-			String newMsg = in.readUTF();
-			System.out.println(newMsg + "\n");
-			
-			//close socket
-			mySoc.close();
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	/**************************************************
-	 * The listens to the socket
-	 * @throws Exception 
-	 */
-	private static void peerListen() throws Exception{
-		//create and listen to socket
-		System.out.println("Listening on Socket: " + myPort);
-		ServerSocket peerSocket = new ServerSocket();
-		peerSocket.setReuseAddress(true);
-		peerSocket.bind( new InetSocketAddress(myIp, myPort) );
-		peerSocket.setReuseAddress(true);
-		Socket peer = peerSocket.accept();
-		
-		System.out.println("Just connected with peer");
-		
-		//create a stream to talk to other peer
-		DataInputStream in = new DataInputStream(peer.getInputStream());
-		DataOutputStream out = new DataOutputStream(peer.getOutputStream());
-		
-		//get string from client A
-		String msg = in.readUTF();
-		System.out.println(msg);
-		
-		//create a message and send it to Client A
-		String newMsg = getTime() + "\t" +myPort+ ": Yes I can hear you!";
-		out.writeUTF(newMsg);
-		System.out.println(newMsg + "\n");
-		
-		//close socket
-		peerSocket.close();
-	}
+*/
 	
 	/**************************************************
 	 * Creates a time stamp

@@ -65,13 +65,4 @@ public class Block {
         System.out.println("Transaction Successfully added to Block");
         return true;
     }
-    
-    public void printBlock(){
-    	System.out.println("hash:"+hash);
-    	System.out.println("previousHash:"+previousHash);
-    
-        System.out.println("merkleRoot:"+merkleRoot);
-        System.out.println("timestamp:"+timeStamp);
-        System.out.println("nonce:"+nonce);
-    }
 }

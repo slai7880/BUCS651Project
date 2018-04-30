@@ -4,7 +4,7 @@
  * @author Nathan Kong, Ardeshir Bastani, Yangcha Ho
  *
  */
-
+package main;
 import java.net.*;
 import java.util.ArrayList;
 import java.io.*;
@@ -16,7 +16,9 @@ public class Server2 {
 		
 		//create a socket for udp on port 54545
 		DatagramSocket serverSocket = new DatagramSocket(54545);
-
+		CoinbaseWallet coinbase = new CoinbaseWallet();
+	    Pet p = coinbase.newpet();
+	    Pet p2 = coinbase.newpet();
 		while(true){
 			System.out.println("Waiting for Clients on Port 54545...");
 			

@@ -9,11 +9,13 @@
  *
  */
 
+import main.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.*;
 import java.net.*;
+import java.security.Security;
 import java.util.*;
 
 import javax.swing.*;
@@ -26,11 +28,20 @@ public class Client extends Thread{
 	private Container c = frame.getContentPane();
 	private JTextField command = new JTextField();
 	static TextArea output=new TextArea("",0,0,1);
+	static TextArea iplist=new TextArea("",0,0,1);
+	static TextArea cur=new TextArea("",0,0,1);
 	static Label show_id=new Label();
+	private MainPanel mpanel;
+	static ArrayList<String> Req = new ArrayList<String>();
 	private JScrollPane jp=new JScrollPane(output);
+	private JScrollPane jp1=new JScrollPane(iplist);
+	private JScrollPane jp2=new JScrollPane(cur);
+	
+	
+	static Wallet wallet;
 	
 	private JButton ok = new JButton("ok");
-	private JButton cancel = new JButton("cancel");
+	private JButton cancel = new JButton("exit");
 	private JButton clear = new JButton("clear");
 	
 //	private rule re;
@@ -40,42 +51,62 @@ public class Client extends Thread{
 	
 	static boolean cli_a=false;
 	
-	public Client(){
+	static int getpeers() {
+		if (iplist.getText().equals("")) return 0;
+		else if (!iplist.getText().matches("\n")) return 1;
+		else return iplist.getText().split("\n").length;
+	}
+	
+	static void updatestatus() {
 		
-		frame.setSize(680,500);
+	}
+	
+	public Client() throws IOException{
+		Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+		wallet = new Wallet();
+		frame.setSize(680, 500);
 		frame.setResizable(false);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		c.setLayout(new BorderLayout());
 		initFrame();
-		frame.setVisible(true);
 		
+		frame.setVisible(true);
+		send.soc("find", "192.168.56.1",54545);
 		}
 	
 	private void initFrame() {
-		
+		mpanel = new MainPanel(3);
+		mpanel.setBounds(30,200,270,210);
+		c.add(mpanel);
 		//output frame
 		JPanel fieldPanel = new JPanel();
 		fieldPanel.setLayout(null);
 		JLabel l1 = new JLabel("command");
-		l1.setBounds(410,30, 70, 20);
+		JLabel l2 = new JLabel("peer list:");
+
+		l2.setBounds(30,30,270,20);
+		l1.setBounds(350,30, 70, 20);
 		fieldPanel.add(l1);
+		fieldPanel.add(l2);
+
+		command.setBounds(410,30,200,20);
+		show_id.setBounds(350, 10, 270, 20);
 		
-		command.setBounds(480,30,200,20);
-		show_id.setBounds(410, 10, 150, 20);
-		
-		output.setBounds(410,60,270,340);
-		
-		show_id.setText("user's id=");
+		output.setBounds(350,60,270,140);
+		iplist.setBounds(30,60,270,100);
+		cur.setBounds(350,220,270,150);
 		
 		jp.setVerticalScrollBarPolicy( JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		
 		fieldPanel.add(show_id);
+		fieldPanel.add(iplist);
 		fieldPanel.add(jp);
 		fieldPanel.add(command);
 		fieldPanel.add(output);
+		fieldPanel.add(cur);
 		output.setEditable(false);
 		
 		c.add(fieldPanel,"Center");
-
 		
 		cancel.addMouseListener(new MouseAdapter(){
 		public void mouseClicked(MouseEvent e){
@@ -88,8 +119,12 @@ public class Client extends Thread{
 			public void mouseClicked(MouseEvent e){
 				if (e.getSource()==ok){
 					output.append(">"+command.getText()+"\n");
+					com.text(command.getText());
 					command.setText("");
 				}
+				mpanel.setPetType(0);
+				//todo
+				mpanel.repaint();
 			}
 		});
 		clear.addMouseListener(new MouseAdapter(){
@@ -109,45 +144,10 @@ public class Client extends Thread{
 		buttonPanel.add(clear);
 		c.add(buttonPanel,"South");
 	}
-	public static void main(String[] args){
+	public static void main(String[] args) throws IOException{
 		new Client();
 	}
 	
-/*	
-	public static void main(String[] args) throws Exception {
-      //String serverName = "teamone.onthewifi.com";
-	  String serverName = "155.41.53.145";
-	  int port = 54545;
-
-      // prepare Socket and data to send
-      DatagramSocket clientSocket = new DatagramSocket();
-      //System.out.println(clientSocket.isBound());
-      clientSocket.setReuseAddress(true);
-
-     
-      while (true) {
-    	  BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-    	  System.out.println("Enter your order: (chat/find)");
-    	  String ord = reader.readLine();
-    	  if (ord.equals("chat")) {
-    	  System.out.println("Enter your destination: ");
-    	  String[] ip; 
-    	  String des = reader.readLine();
-    	  ip=des.split(":");
-    	  System.out.println("Enter your message: ");
-    	  String word = reader.readLine();
-    	  send.soc(word, ip[0], Integer.parseInt(ip[1]));
-    	  }
-    	  else if (ord.equals("find"))
-    	  {
-    		  send.soc("test", serverName, port);
-    	  }
-      }
-      
-      
-	}//main
-	
-*/
 	
 	/**************************************************
 	 * Creates a time stamp

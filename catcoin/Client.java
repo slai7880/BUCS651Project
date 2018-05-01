@@ -16,6 +16,7 @@ import java.awt.event.MouseEvent;
 import java.io.*;
 import java.net.*;
 import java.security.GeneralSecurityException;
+import java.security.PublicKey;
 import java.security.Security;
 import java.util.*;
 
@@ -32,10 +33,13 @@ public class Client extends Thread{
 	static TextArea iplist=new TextArea("",0,0,1);
 	static TextArea cur=new TextArea("",0,0,1);
 	static Label show_id=new Label();
-	private MainPanel mpanel;
+	static MainPanel mpanel;
 	static ArrayList<String> peers = new ArrayList<String>();
 	static ArrayList<String> pks = new ArrayList<String>();
 	static ArrayList<String> Req = new ArrayList<String>();
+	
+	static ArrayList<String> pk=new ArrayList<String>();
+	
 	private JScrollPane jp=new JScrollPane(output);
 	private JScrollPane jp1=new JScrollPane(iplist);
 	private JScrollPane jp2=new JScrollPane(cur);
@@ -59,9 +63,15 @@ public class Client extends Thread{
 		else return iplist.getText().split("\n").length;
 	}
 	
-	static void updatestatus() {
-		
-	}
+	static void BalanceList() throws GeneralSecurityException {
+		  Integer i = 0;
+		  System.out.println("My"+" Balance="+Client.wallet.getBalance(Client.wallet.publicKey));
+		  for (String pkstring:pks){
+		   PublicKey pk = StringToBlock.loadPublicKey(pkstring);
+		   System.out.println("Peer"+i+"'s"+" Balance="+Client.wallet.getBalance(pk));
+		   i++;
+		  }
+		 }
 	
 	public Client() throws IOException, GeneralSecurityException{
 		Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
@@ -72,7 +82,7 @@ public class Client extends Thread{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		initFrame();
 		frame.setVisible(true);
-		send.soc(("find"+"+"+Wallet.savePublicKey(wallet.publicKey)), "192.168.1.102",54545);
+		send.soc(("find"+"+"+Wallet.savePublicKey(wallet.publicKey)), "155.41.53.145",54545);
 		}
 	
 	private void initFrame() {
@@ -125,9 +135,6 @@ public class Client extends Thread{
 					com.text(command.getText());
 					command.setText("");
 				}
-				mpanel.setPetType(wallet.getPets());
-				//todo
-				mpanel.repaint();
 			}
 		});
 		clear.addMouseListener(new MouseAdapter(){

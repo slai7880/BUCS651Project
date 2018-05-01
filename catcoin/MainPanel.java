@@ -25,6 +25,9 @@ public class MainPanel extends JPanel {
 		return petType;
 	}
 
+	public void set(String s) {
+		setPetType(s);
+	}
 	public void setPetType(String petType) {
 		this.petType = petType;
 	}

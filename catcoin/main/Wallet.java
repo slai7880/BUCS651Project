@@ -43,23 +43,23 @@ public class Wallet {
         }
     }
 
-    public float getBalance() {
+    public float getBalance(PublicKey publicKey) {
     	float total = 0;
 		for (int i =0; i < blockchain.size(); i++) {
 			Block currentBlock = blockchain.get(i);
 				Transaction currentTransaction = currentBlock.transactions;
 
-				if (currentTransaction.reciepient == publicKey && currentTransaction.value > 0) {
+				if (currentTransaction.reciepient.equals( publicKey) && currentTransaction.value > 0) {
 					total += currentTransaction.value;
 				}
-				if (currentTransaction.sender == publicKey && currentTransaction.value > 0) {
+				if (currentTransaction.sender.equals(publicKey) && currentTransaction.value > 0) {
 					total -= currentTransaction.value;
 				}
 		}
 		return total;
     }
     public Transaction sendFunds(PublicKey _recipient,float value ) {
-        if(getBalance() < value) {
+        if(getBalance(this.publicKey) < value) {
             System.out.println("#Not Enough funds to send transaction. Transaction Discarded.");
             return null;
         }
@@ -127,40 +127,6 @@ public class Wallet {
                 if(!currentTransaction.verifySignature()) {
                     System.out.println("#Signature on Transaction is Invalid");
                     return false;
-//              if( currentTransaction.reciepient != currentTransaction.reciepient) {
-//              System.out.println("#Transaction(" + t + ") output reciepient is not who it should be");
-//              return false;
-//          }
-//                if(currentTransaction.getInputsValue() != currentTransaction.getOutputsValue()) {
-//                    System.out.println("#Inputs are note equal to outputs on Transaction(" + t + ")");
-//                    return false;
-//                }
-
-//                for(TransactionInput input: currentTransaction.inputs) {
-//                    tempOutput = tempUTXOs.get(input.transactionOutputId);
-//
-//                    if(tempOutput == null) {
-//                        System.out.println("#Referenced input on Transaction(" + t + ") is Missing");
-//                        return false;
-//                    }
-//
-//                    if(input.UTXO.value != tempOutput.value) {
-//                        System.out.println("#Referenced input Transaction(" + t + ") value is Invalid");
-//                        return false;
-//                    }
-//
-//                    tempUTXOs.remove(input.transactionOutputId);
-//                }
-//
-//                for(TransactionOutput output: currentTransaction.outputs) {
-//                    tempUTXOs.put(output.id, output);
-//                }
-//
-
-//                if( currentTransaction.outputs.get(1).reciepient != currentTransaction.sender) {
-//                    System.out.println("#Transaction(" + t + ") output 'change' is not sender.");
-//                    return false;
-//                }
 
             }
 
@@ -209,11 +175,11 @@ public class Wallet {
     	for (int i=0;i< blockchain.size();i++) {
 			Block currentBlock = blockchain.get(i);
 				Transaction currentTransaction = currentBlock.transactions;
-				if (currentTransaction.pethash !=null && currentTransaction.reciepient==publicKey) {
+				if (currentTransaction.pethash !=null && currentTransaction.reciepient.equals(publicKey)) {
 					pets.add(currentTransaction.pethash);
 				
 			}
-				if (currentTransaction.pethash !=null && currentTransaction.sender==publicKey) {
+				if (currentTransaction.pethash !=null && currentTransaction.sender.equals(publicKey)) {
 					pets.remove(currentTransaction.pethash);
 				
 			}
@@ -231,4 +197,11 @@ public class Wallet {
 		}
 		return result;
     }
+    public void addChain(ArrayList<Block> partchain){
+        for(Block block:partchain){
+            addBlock(block);
+        }
+    }
+    
+    
 }

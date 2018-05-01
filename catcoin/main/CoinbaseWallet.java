@@ -127,12 +127,14 @@ public class CoinbaseWallet {
             Block genesis = new Block("0");
             for(Transaction t:transactions)
                 genesis.addTransaction(t);
+            addBlock(genesis);
             return genesis;
         }
         else{
             Block bk  = new Block( blockchain.get(blockchain.size()-1).hash);
             for(Transaction t:transactions)
             bk.addTransaction(t);
+            addBlock(bk);
             return bk;
             }
     }

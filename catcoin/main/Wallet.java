@@ -8,25 +8,20 @@ import java.security.spec.KeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Base64.*;
 
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
-/**
- * Created on 2018/3/10 0010.
- *
- * @author zlf
- * @email i@merryyou.cn
- * @since 1.0
- */
 public class Wallet {
 
     public PrivateKey privateKey;
     public PublicKey publicKey;
     public ArrayList<Block> blockchain = new ArrayList<Block>();
     public int difficulty = 4;
-    
+    public HashMap<String, String>petList=new HashMap<>();
     public Wallet() {
         generateKeyPair();
     }
@@ -52,8 +47,7 @@ public class Wallet {
     	float total = 0;
 		for (int i =0; i < blockchain.size(); i++) {
 			Block currentBlock = blockchain.get(i);
-			for (int t = 0; t < currentBlock.transactions.size(); t++) {
-				Transaction currentTransaction = currentBlock.transactions.get(t);
+				Transaction currentTransaction = currentBlock.transactions;
 
 				if (currentTransaction.reciepient == publicKey && currentTransaction.value > 0) {
 					total += currentTransaction.value;
@@ -61,7 +55,6 @@ public class Wallet {
 				if (currentTransaction.sender == publicKey && currentTransaction.value > 0) {
 					total -= currentTransaction.value;
 				}
-			}
 		}
 		return total;
     }
@@ -93,11 +86,9 @@ public class Wallet {
 		ArrayList<Block> blockchain = this.blockchain;
 		for (int i = blockchain.size()-1; i >= 0; i--) {
 			Block currentBlock = blockchain.get(i);
-			for (int t = 0; t < currentBlock.transactions.size(); t++) {
-				Transaction currentTransaction = currentBlock.transactions.get(t);
+				Transaction currentTransaction = currentBlock.transactions;
 				if (currentTransaction.pethash == pethash) {
 					return currentTransaction.reciepient;
-				}
 			}
 		}
 		return null;
@@ -132,13 +123,10 @@ public class Wallet {
 
             //loop thru blockchains transactions:
 //            TransactionOutput tempOutput;
-            for(int t=0; t <currentBlock.transactions.size(); t++) {
-                Transaction currentTransaction = currentBlock.transactions.get(t);
-
+                Transaction currentTransaction = currentBlock.transactions;
                 if(!currentTransaction.verifySignature()) {
-                    System.out.println("#Signature on Transaction(" + t + ") is Invalid");
+                    System.out.println("#Signature on Transaction is Invalid");
                     return false;
-                }
 //              if( currentTransaction.reciepient != currentTransaction.reciepient) {
 //              System.out.println("#Transaction(" + t + ") output reciepient is not who it should be");
 //              return false;
@@ -212,5 +200,35 @@ public class Wallet {
         if (newlength> blockchain.size()){
             replacechain(chain);
         }
+    }
+    public void savePet(String pethash,String petcount){
+    	petList.put(pethash, petcount);
+    }
+    public String getPets(){
+    	ArrayList<String> pets=new ArrayList<>();
+    	for (int i=0;i< blockchain.size();i++) {
+			Block currentBlock = blockchain.get(i);
+				Transaction currentTransaction = currentBlock.transactions;
+				if (currentTransaction.pethash !=null && currentTransaction.reciepient==publicKey) {
+					pets.add(currentTransaction.pethash);
+				
+			}
+				if (currentTransaction.pethash !=null && currentTransaction.sender==publicKey) {
+					pets.remove(currentTransaction.pethash);
+				
+			}
+
+		}
+		String result = "";
+		if (pets.size() == 0) {
+			result = "0";
+		} else {
+			for (Map.Entry<String, String> entry : petList.entrySet()) {
+				if (pets.contains(entry.getKey())) {
+					result += entry.getValue();
+				}
+			}
+		}
+		return result;
     }
 }

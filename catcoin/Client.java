@@ -40,7 +40,6 @@ public class Client extends Thread{
 	private JScrollPane jp1=new JScrollPane(iplist);
 	private JScrollPane jp2=new JScrollPane(cur);
 	
-	
 	static Wallet wallet;
 	
 	private JButton ok = new JButton("ok");
@@ -73,14 +72,14 @@ public class Client extends Thread{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		initFrame();
 		frame.setVisible(true);
-		send.soc(("find"+"+"+Wallet.savePublicKey(wallet.publicKey)), "155.41.53.145",54545);
+		send.soc(("find"+"+"+Wallet.savePublicKey(wallet.publicKey)), "192.168.1.102",54545);
 		}
 	
 	private void initFrame() {
 		
 		//output frame
 		
-		mpanel = new MainPanel(3);
+		mpanel = new MainPanel(wallet.getPets());
 		mpanel.setBounds(30,200,270,210);
 		c.add(mpanel);
 		JPanel fieldPanel = new JPanel();
@@ -126,7 +125,7 @@ public class Client extends Thread{
 					com.text(command.getText());
 					command.setText("");
 				}
-				mpanel.setPetType(0);
+				mpanel.setPetType(wallet.getPets());
 				//todo
 				mpanel.repaint();
 			}

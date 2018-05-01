@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 
 import main.Block;
 import main.FormatConversion;
+import main.StringToBlock;
 import main.Transaction;
 import main.Wallet;
 
@@ -41,7 +42,6 @@ class recieve implements Runnable
 			int port = recvPacket.getPort();
 			String ip = ipAddress.toString();
 			ip=ip.substring(1, ip.length());
-			System.out.println(recvStr);
 			if (recvStr.matches("^1-.+")) {
 				
 				String[] iplist=recvStr.split("-");
@@ -94,13 +94,15 @@ class recieve implements Runnable
             	System.out.println(recvStr);
             	if (valid()) {
             		String[] tmp = recvStr.split("append ");
-            	     String blockjson  = tmp[tmp.length-1];
-            	     Gson gson = new Gson();
-            	     Block block  = gson.fromJson(blockjson, Block.class);
-            	     Client.wallet.addBlock(block);
+            	    
             		
             		System.out.println("miao?");
-            		//Client.wallet.addBlock(FormatConversion.fromJSON(recvStr.substring(7)));
+            		try {
+						Client.wallet.addBlock(StringToBlock.abc(recvStr.substring(7)));
+					} catch (GeneralSecurityException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
             	}
             	System.out.println("hi"+Client.wallet.getBalance());
             } else if (recvStr.matches("longer")) {

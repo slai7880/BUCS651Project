@@ -1,8 +1,15 @@
 package main;
 
+import com.google.gson.GsonBuilder;
 import utils.StringUtil;
 
+import java.security.GeneralSecurityException;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.spec.EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 
 /**
@@ -16,7 +23,7 @@ public class Block {
     public String hash;
     public String previousHash;
     public String merkleRoot;
-    public ArrayList<Transaction> transactions = new ArrayList<Transaction>(); //our data will be a simple message.
+    public Transaction transactions ; //our data will be a simple message.
     public long timeStamp; //as number of milliseconds since 1/1/1970.
     public int nonce;
 
@@ -41,7 +48,9 @@ public class Block {
 
     //Increases nonce value until hash target is reached.
     public void mineBlock(int difficulty) {
-        merkleRoot = StringUtil.getMerkleRoot(transactions);
+        ArrayList<Transaction> tmp = new ArrayList<Transaction>();
+        tmp.add(transactions);
+        merkleRoot = StringUtil.getMerkleRoot(tmp);
         String target = StringUtil.getDificultyString(difficulty); //Create a string with difficulty * "0"
         while (!hash.substring(0, difficulty).equals(target)) {
             nonce++;
@@ -60,9 +69,29 @@ public class Block {
                 return false;
             }
         }
-
-        transactions.add(transaction);
+        this.transactions= transaction;
         System.out.println("Transaction Successfully added to Block");
         return true;
     }
+    public String BlockToString() throws GeneralSecurityException {
+        String sender = StringToBlock.savePublicKey(transactions.sender);
+        System.out.println(sender);
+        String reciepient = StringToBlock.savePublicKey(transactions.reciepient);
+        System.out.println(reciepient);
+
+        String signature;
+        try {
+             signature = new String(transactions.signature, "ISO-8859-1");
+        }catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        String res = "";
+        res += hash+"fuckfuckfuck"+previousHash+"fuckfuckfuck"+merkleRoot+"fuckfuckfuck"
+                +sender+"fuckfuckfuck"+reciepient+"fuckfuckfuck"+Float.toString(transactions.value)+"fuckfuckfuck"+transactions.pethash
+                +"fuckfuckfuck"+signature+"fuckfuckfuck"+Long.toString(timeStamp)+"fuckfuckfuck"+Integer.toString(nonce) ;
+        return  res;
+    }
+
+
+
 }

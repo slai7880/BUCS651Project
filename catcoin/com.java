@@ -67,7 +67,6 @@ class com
         	//send block
         	count=0;
         	app=true;
-        	
         	String sendmessage="";
             try {
 				boardcast(sendmessage);

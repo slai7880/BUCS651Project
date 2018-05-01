@@ -107,15 +107,15 @@ public class CoinbaseWallet {
 
             //loop thru blockchains transactions:
 //            TransactionOutput tempOutput;
-            for(int t=0; t <currentBlock.transactions.size(); t++) {
-                Transaction currentTransaction = currentBlock.transactions.get(t);
+
+                Transaction currentTransaction = currentBlock.transactions;
 
                 if(!currentTransaction.verifySignature()) {
-                    System.out.println("#Signature on Transaction(" + t + ") is Invalid");
+                    System.out.println("#Signature on Transaction() is Invalid");
                     return false;
                 }
 
-            }
+
 
         }
         System.out.println("Blockchain is valid");

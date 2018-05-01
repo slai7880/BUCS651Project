@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import main.Block;
 import main.CoinbaseWallet;
 import main.FormatConversion;
+import main.StringToBlock;
 import main.Transaction;
 import main.Wallet;
 
@@ -20,6 +21,7 @@ import java.io.*;
 public class Server2 {
 	static ArrayList<String> mylist = new ArrayList<String>();
 	static ArrayList<String> pklist = new ArrayList<String>();
+	static ArrayList<String> plist = new ArrayList<String>();
 	
 	public static void main(String[] args) throws Exception{
 		
@@ -50,10 +52,16 @@ public class Server2 {
 		      String recvStr = new String(recvPacket.getData() , 0 , recvPacket.getLength());
 		      System.out.println(recvStr);
 		      if (recvStr.matches("^find.+")){
+		    	  try   
+		    	  {   
+		    	  Thread.currentThread().sleep(1000);//毫秒   
+		    	  }   
+		    	  catch(Exception e){}
 		    	  if (!mylist.contains(temp)){
 						mylist.add(temp);
 						pklist.add(recvStr.substring(5));
 					}
+		    	   
 		    	  String sendstring="1";
 		    	  for (int i=0;i<mylist.size();i++) {
 		    		  sendstring+="-"+mylist.get(i)+"=>"+pklist.get(i);
@@ -70,9 +78,10 @@ public class Server2 {
 		    		  DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName(ip), port);
 		    		  ServerSocket.send(sendPacket);
 		    		  
-		    		  
-		    		  String sendblock="append "+FormatConversion.toJSON(block0);//new block sent
-		    		  sendData=sendblock.getBytes();
+		    		  System.out.println(block0);
+		    		  String sendblock=block0.BlockToString();//new block sent
+		    		  		    		  
+		    		  sendData=("append "+sendblock).getBytes();
 		    		  sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName(ip), port);
 		    		  ServerSocket.send(sendPacket);
 		    	  }

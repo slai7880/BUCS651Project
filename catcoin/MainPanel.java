@@ -1,20 +1,14 @@
-import java.applet.Applet;
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
 
-
 import javax.swing.JPanel;
-
 
 public class MainPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
-	private int petType;
+	private String petType;
 
-	public MainPanel(int b) {
+	public MainPanel(String b) {
 		setPetType(b);
 	}
 
@@ -27,11 +21,11 @@ public class MainPanel extends JPanel {
 
 	}
 
-	public int getPetType() {
+	public String getPetType() {
 		return petType;
 	}
 
-	public void setPetType(int petType) {
+	public void setPetType(String petType) {
 		this.petType = petType;
 	}
 

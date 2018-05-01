@@ -20,7 +20,7 @@ public class test {
 	
 	
     public static void main(String[] args) throws GeneralSecurityException {
-       /* Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         Wallet walletA = new Wallet();
         Wallet walletB = new Wallet();
         Wallet walletC = new Wallet();
@@ -31,7 +31,7 @@ public class test {
         ArrayList<Transaction> Xaction = new ArrayList<Transaction>();
         walletA.publicKey.toString();
         Xaction.add(coinbase.moneyTransantion(walletA.publicKey, 100f));
-        Xaction.add(coinbase.petTransaction(walletB.publicKey, p.getHash()));
+/*        Xaction.add(coinbase.petTransaction(walletB.publicKey, p.getHash()));
         Xaction.add(coinbase.petTransaction(walletC.publicKey, p2.getHash()));
         
         Block block0 = coinbase.newblock(Xaction);
@@ -56,25 +56,6 @@ public class test {
         blockchainJson = new GsonBuilder().setPrettyPrinting().create().toJson(walletC.blockchain);
         System.out.println("\nThe block chain: ");
         System.out.println(blockchainJson);*/
-    	Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-        Wallet walletA = new Wallet();
-        System.out.println(walletA.publicKey);
-        System.out.println(walletA.publicKey.getEncoded());
-        PublicKey publicKey = null;
-        byte[] b=walletA.publicKey.getEncoded();
-        try {
-			publicKey = 
-				    KeyFactory.getInstance("ECDSA").generatePublic(new X509EncodedKeySpec(b));
-		} catch (InvalidKeySpecException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
-        
-        System.out.println(Wallet.savePublicKey(walletA.publicKey));
-        System.out.println(Wallet.loadPublicKey(Wallet.savePublicKey(walletA.publicKey)));
+
     }
 }

@@ -7,8 +7,8 @@ import java.util.Random;
 
 public class Pet {
     public static Integer count = 0;
-    private String hash;
-    private int hp;
+    public String hash;
+    public int hp;
 
     Random random=new Random();
     private int hpmax=10;

@@ -2,17 +2,11 @@
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
-import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.ArrayList;
-
-import main.Block;
-import main.Transaction;
-import main.Wallet;
 
 class com
 {
@@ -20,6 +14,21 @@ class com
 	
 	static boolean in=false;
 	static int count;
+	
+	public static PublicKey decodepk (byte[] b) {
+		PublicKey publicKey = null;
+        try {
+			publicKey = 
+				    KeyFactory.getInstance("ECDSA").generatePublic(new X509EncodedKeySpec(b));
+		} catch (InvalidKeySpecException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return publicKey;
+	}
 	
 	public static boolean isNum(String str) {
 		  
@@ -34,11 +43,9 @@ class com
 	
 	public static void boardcast(String sendstring) throws IOException {
 		String[] ipl=Client.iplist.getText().toString().split("\n");
-		
         for (String i :ipl) {
-        	System.out.println(i);
-        	int port=Integer.parseInt(i.split(":")[2]);
-        	String ip=i.split(":")[1];
+        	int port=Integer.parseInt(i.split(":")[1]);
+        	String ip=i.split(":")[0];
         	send.soc(sendstring,ip,port);
         }
 	}
@@ -50,39 +57,19 @@ class com
             
         	String[] ipl=Client.iplist.getText().toString().split("\n");
         	String[] req=s.split(" ");
-        	int des=Integer.parseInt(req[3]);
+        	int des=Integer.parseInt(req[2]);
             try {
-                send.soc("request"+":"+req[1]+":"+req[2], ipl[des].split(":")[1], Integer.parseInt(ipl[des].split(":")[2]));
+                send.soc("request"+":"+req[1], ipl[des].split(":")[0], Integer.parseInt(ipl[des].split(":")[1]));
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else if (s.matches("^/accept.+")) {
         	//send block
-        	String[] req=Client.Req.get(Integer.parseInt(s.split(" ")[1])).split(":");
-        	/*int order=Client.peers.indexOf(req[0]+":"+req[1]);
-        	ArrayList<Transaction> Xaction = new ArrayList<Transaction>();
-        	try {
-        		Xaction.add(Client.wallet.sendPet(Wallet.loadPublicKey(Client.pks.get(order)), Client.pk.get(Integer.parseInt(req[2]))));
-				//Xaction.add(Client.wallet.sendPet(Wallet.loadPublicKey(Client.pks.get(order)), Client.wallet.petList.get(req[2])));
-			} catch (NumberFormatException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (GeneralSecurityException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-        	
-        	
-        	String sendmessage="agree "+Client.wallet.blockchain.size();
+        	count=0;
+        	app=true;
+        	String sendmessage="";
             try {
 				boardcast(sendmessage);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}*/
-        
-        	try {
-				send.soc(("transaction "+req[2]+" "+req[3]+" "+req[0]+":"+req[1]),"155.41.53.145",54545);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -99,10 +86,10 @@ class com
         		}
         	}
         	
-        } else if (s.matches("^/decline.*")) {
+        } else if (s.matches("/decline")) {
         	
         	String[] req=s.split(" ");
-        	int des=Integer.parseInt(req[1]);
+        	int des=Integer.parseInt(req[2]);
         	String[] ipd=Client.Req.get(des).split(":");
             try {
                 send.soc("decline", ipd[0], Integer.parseInt(ipd[1]));

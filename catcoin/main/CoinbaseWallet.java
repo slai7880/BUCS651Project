@@ -22,8 +22,7 @@ public class CoinbaseWallet {
     public PrivateKey privateKey;
     public PublicKey publicKey;
     public Integer petcount;
-  //  public HashMap<String,TransactionOutput> UTXOs = new HashMap<String,TransactionOutput>();
-    public ArrayList<Block> blockchain = new ArrayList<Block>();
+    public static ArrayList<Block> blockchain = new ArrayList<Block>();
     public int difficulty;
 
     {
@@ -50,7 +49,9 @@ public class CoinbaseWallet {
             throw new RuntimeException(e);
         }
     }
-
+    public ArrayList<Block> getBlockchain(){
+        return this.blockchain;
+    }
 
     public Pet newpet() {
         Pet p = new Pet();
@@ -151,5 +152,19 @@ public class CoinbaseWallet {
         if (newlength> blockchain.size()){
             replacechain(chain);
         }
+    }
+    public float getBalance(PublicKey publicKey) {
+        float total = 0;
+        for (int i =0; i < blockchain.size(); i++) {
+            Block currentBlock = blockchain.get(i);
+            Transaction currentTransaction = currentBlock.transactions;
+            if (currentTransaction.recipient.equals(FormatConversion.fromPublicKey(publicKey) ) && currentTransaction.value >= 0) {
+                total += currentTransaction.value;
+            }
+            if (currentTransaction.sender.equals(FormatConversion.fromPublicKey(publicKey)) && currentTransaction.value >= 0) {
+                total -= currentTransaction.value;
+            }
+        }
+        return total;
     }
 }

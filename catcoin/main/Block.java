@@ -73,25 +73,23 @@ public class Block {
         System.out.println("Transaction Successfully added to Block");
         return true;
     }
-    public String BlockToString() throws GeneralSecurityException {
-        String sender = StringToBlock.savePublicKey(transactions.sender);
-        System.out.println(sender);
-        String reciepient = StringToBlock.savePublicKey(transactions.reciepient);
-        System.out.println(reciepient);
-
-        String signature;
-        try {
-             signature = new String(transactions.signature, "ISO-8859-1");
-        }catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        String res = "";
-        res += hash+"fuckfuckfuck"+previousHash+"fuckfuckfuck"+merkleRoot+"fuckfuckfuck"
-                +sender+"fuckfuckfuck"+reciepient+"fuckfuckfuck"+Float.toString(transactions.value)+"fuckfuckfuck"+transactions.pethash
-                +"fuckfuckfuck"+signature+"fuckfuckfuck"+Long.toString(timeStamp)+"fuckfuckfuck"+Integer.toString(nonce) ;
-        return  res;
-    }
-
+//    public String BlockToString() throws GeneralSecurityException {
+//        String sender = StringToBlock.savePublicKey(transactions.sender);
+//        String reciepient = StringToBlock.savePublicKey(transactions.reciepient);
+//
+//        String signature;
+//        try {
+//             signature = new String(transactions.signature, "ISO-8859-1");
+//        }catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//        String res = "";
+//        res += hash+"fuckfuckfuck"+previousHash+"fuckfuckfuck"+merkleRoot+"fuckfuckfuck"
+//                +sender+"fuckfuckfuck"+reciepient+"fuckfuckfuck"+Float.toString(transactions.value)+"fuckfuckfuck"+transactions.pethash
+//                +"fuckfuckfuck"+signature+"fuckfuckfuck"+Long.toString(timeStamp)+"fuckfuckfuck"+Integer.toString(nonce) ;
+//        return  res;
+//    }
+//
 
 
 }
